@@ -1,1 +1,7 @@
-python-telegram-bot
+# general modules
+pyTelegramBotAPI==4.24.0
+python-decouple
+aiohttp
+
+# hot realoding modules
+# watchdog
