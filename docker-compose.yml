@@ -1,0 +1,10 @@
+services:
+    core:
+        build:
+            context: ./core
+            dockerfile: Dockerfile
+        container_name: core
+        command: python main.py
+        volumes:
+            - ./core:/app
+        restart: always
