@@ -2,14 +2,16 @@ from functools import wraps
 
 from telebot.types import Message
 
-from core import settings
-from core.settings import BOT, LOGGING
+from core.configs import settings
+from core.configs.settings import BOT, LOGGER
 
-logging = LOGGING
+logger = LOGGER
 bot = BOT
 
 
 def is_in_channel(func):
+    """Decorator for checking membership in a channel."""
+
     @wraps(func)
     async def wrapper(message: Message, *args, **kwargs):
         user_id = message.from_user.id
@@ -25,7 +27,7 @@ def is_in_channel(func):
                 )
                 return None
         except Exception as e:
-            logging.error(f"Error checking user membership: {e}")
+            logger.error(f"Error checking user membership: {e}")
             await bot.reply_to(
                 message,
                 text="❌ Could not verify your membership in the channel. Please try again.",
