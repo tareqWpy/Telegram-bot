@@ -1,27 +1,22 @@
-from decouple import config
+import sys
+from pathlib import Path
 
-# SECURITY WARNING: keep the TOKEN used in production secret!
-TOKEN = config("TOKEN", cast=str)
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
+from core.decorators.memberships import is_in_channel
+from core.settings import BOT
 
-import asyncio
-
-from telebot.async_telebot import AsyncTeleBot
-
-bot = AsyncTeleBot(token=TOKEN)
+bot = BOT
 
 
-# Handle '/start' and '/help'
-@bot.message_handler(commands=["help", "start"])
-async def send_welcome(message) -> None:
+@bot.message_handler(commands=["start"])
+@is_in_channel
+async def start_handler(message):
     text = "Hi, I am EchoBot.\nJust write me something and I will repeat it!"
     await bot.reply_to(message, text)
 
 
-# Handle all other messages with content_type 'text' (content_types defaults to ['text'])
-@bot.message_handler(func=lambda message: True)
-async def echo_message(message) -> None:
-    await bot.reply_to(message, message.text)
+if __name__ == "__main__":
+    import asyncio
 
-
-asyncio.run(bot.polling())
+    asyncio.run(bot.polling())
