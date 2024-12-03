@@ -7,11 +7,10 @@ from core.configs.settings import BOT, LOGGER
 bot = BOT
 logger = LOGGER
 
+throttle_storage = defaultdict(lambda: {})
 
-throttle_storage = defaultdict(lambda: 0)
 
-
-def throttled(rate_limit: int):
+def throttled(rate_limit: int, command_name: str):
     """Decorator for throttling function calls."""
 
     def decorator(func):
@@ -19,7 +18,7 @@ def throttled(rate_limit: int):
         async def wrapper(message, *args, **kwargs):
             user_id = message.from_user.id
             current_time = time.time()
-            last_called = throttle_storage[user_id]
+            last_called = throttle_storage[user_id].get(command_name, 0)
 
             if current_time - last_called < rate_limit:
                 remaining_time = rate_limit - (current_time - last_called)
@@ -27,10 +26,12 @@ def throttled(rate_limit: int):
                     message,
                     f"Please wait {int(remaining_time)} seconds before using this command again.",
                 )
-                logger.info(f"Throttled message from user: {user_id}")
+                logger.info(
+                    f"Throttled message from user: {user_id} for command: {command_name}"
+                )
                 return
 
-            throttle_storage[user_id] = current_time
+            throttle_storage[user_id][command_name] = current_time
             return await func(message, *args, **kwargs)
 
         return wrapper

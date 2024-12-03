@@ -16,4 +16,7 @@ LOGGER = logger
 CHANNEL_ID = config("CHANNEL_ID", cast=str)
 CHANNEL_LINK = config("CHANNEL_LINK", cast=str)
 
-RATE_LIMIT = {"start_rate_limit": 20}
+RATE_LIMIT = {
+    "start_rate_limit": 20,
+    "help_rate_limit": 10,
+}

@@ -1,1 +1,2 @@
 START_MESSAGE = "Welcome"
+HELP_MESSAGE = "OK"
